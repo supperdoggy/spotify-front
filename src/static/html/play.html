@@ -1,0 +1,19 @@
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.plyr.io/1.8.2/plyr.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body style="background: black">
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.plyr.io/1.8.2/plyr.js"></script>
+<script src="./src/static/js/play.js"></script>
+
+
+<div id="buttons">
+    <button onclick="turnSong('http://localhost:8080/outputlist.m3u8')">instasamka</button>
+    <button onclick="turnSong('http://localhost:8080/ex1.m3u8')">baba gspd</button>
+</div>
+
+        <audio id="player"></audio>
+</body>
+</html>
