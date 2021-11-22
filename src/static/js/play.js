@@ -19,9 +19,13 @@ function turnSong(path) {
 window.onload = function (e) {
    console.log("did");
     $.ajax({
-        url: "http://localhost:8080/allsongs",
+        url: "http://localhost:8081/api/v1/getallsongs",
     })
         .done(function( data ) {
-            console.log(data);
+            for (let i = 0; i < data.songs.length; i++) {
+                console.log(data.songs[i]);
+                let el = `<button onclick="turnSong('${data.songs[i].path}')">${data.songs[i].name}</button>`;
+                $("#buttons").append(el);
+            }
         });
 }

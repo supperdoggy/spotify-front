@@ -23,7 +23,7 @@ func NewService(l *zap.Logger) IService {
 }
 
 func (s *Service) GetAllSongs() (*structs.GetAllSongsRespose, error) {
-	resp, err := http.Get("http://localhost:8080")
+	resp, err := http.Get("http://localhost:8080/allsongs")
 	if err != nil {
 		s.logger.Error("error making request to backend", zap.Error(err))
 		return nil, err
