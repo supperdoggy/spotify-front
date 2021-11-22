@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/supperdoggy/webproject/frontend/internal/handlers"
-	service2 "github.com/supperdoggy/webproject/frontend/internal/service"
+	"github.com/supperdoggy/spotify-web-project/spotify-front/internal/handlers"
+	service2 "github.com/supperdoggy/spotify-web-project/spotify-front/internal/service"
 	"go.uber.org/zap"
 )
 

@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/supperdoggy/webproject/frontend/internal/service"
+	"github.com/supperdoggy/spotify-web-project/spotify-front/internal/service"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -18,7 +18,7 @@ type Handlers struct {
 }
 
 func NewHandlers(l *zap.Logger, r *gin.Engine, s *service.IService) IHandlers {
-	return &Handlers{logger: l, r: r, s: s}
+	return &Handlers{logger: l, r: r, s: *s}
 }
 
 func (h *Handlers) InitHandlers() {

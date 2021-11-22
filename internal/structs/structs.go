@@ -1,6 +1,6 @@
 package structs
 
-import "github.com/supperdoggy/webproject/globalStructs"
+import globalStructs "github.com/supperdoggy/spotify-web-project/spotify-globalStructs"
 
 type GetAllSongsRespose struct {
 	Songs []globalStructs.Song `json:"songs"`

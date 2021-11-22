@@ -2,8 +2,9 @@ package service
 
 import (
 	"encoding/json"
-	"github.com/supperdoggy/webproject/frontend/internal/structs"
-	"github.com/supperdoggy/webproject/globalStructs"
+	"github.com/supperdoggy/spotify-web-project/spotify-front/internal/structs"
+	globalStructs "github.com/supperdoggy/spotify-web-project/spotify-globalStructs"
+
 	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
