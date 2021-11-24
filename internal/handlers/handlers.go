@@ -23,10 +23,12 @@ func NewHandlers(l *zap.Logger, r *gin.Engine, s *service.IService) IHandlers {
 
 func (h *Handlers) InitHandlers() {
 	h.r.GET("/", h.index)
+	h.r.GET("/upload", h.downloadFile)
 
 	apiv1 := h.r.Group("/api/v1")
 	{
 		apiv1.GET("/getallsongs", h.getAllSongs)
+		apiv1.POST("/song", h.uploadSong)
 	}
 }
 
@@ -45,4 +47,17 @@ func (h *Handlers) getAllSongs(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, respose)
+}
+
+func (h *Handlers) downloadFile(c *gin.Context) {
+	c.HTML(http.StatusOK, "download.html", gin.H{})
+}
+
+func (h *Handlers) uploadSong(c *gin.Context) {
+	var data = gin.H{}
+	if err := c.Bind(&data); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "cant read your file man"})
+		return
+	}
+	// todo forward data to backend
 }
