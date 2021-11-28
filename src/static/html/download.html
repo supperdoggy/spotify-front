@@ -10,9 +10,33 @@
 <body>
 <script src="./src/static/js/download.js"></script>
     <div>
+        <label for="name">Song Name</label>
+        <input type="text" id="name">
+        <br>
+        <br>
+
+
+        <label for="album">Album name</label>
+        <input type="text" id="album">
+        <br>
+        <br>
+
+        <label for="band">Band Name</label>
+        <input type="text" id="band">
+        <br>
+        <br>
+
+        <label for="release">Release date</label>
+        <input type="datetime-local" id="release">
+        <br>
+        <br>
+
         <label for="file">Choose file to upload</label>
         <input type="file" id="file"
                accept=".mp3">    </div>
+        <br>
+        <br>
+
     <div>
         <button id="file_send" onclick="send()">Submit</button>
     </div>

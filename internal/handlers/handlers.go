@@ -3,6 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/supperdoggy/spotify-web-project/spotify-front/internal/service"
+	"github.com/supperdoggy/spotify-web-project/spotify-front/internal/structs"
 	"go.uber.org/zap"
 	"net/http"
 )
@@ -54,10 +55,19 @@ func (h *Handlers) downloadFile(c *gin.Context) {
 }
 
 func (h *Handlers) uploadSong(c *gin.Context) {
-	var data = gin.H{}
+	var data structs.UploadSongRequest
 	if err := c.Bind(&data); err != nil {
+		h.logger.Error("error binding req", zap.Error(err))
 		c.JSON(http.StatusBadRequest, gin.H{"error": "cant read your file man"})
 		return
 	}
+
 	// todo forward data to backend
+	err := h.s.UploadNewSong(&data)
+	if err != nil {
+		h.logger.Info("error when creating new song", zap.Error(err))
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "ok"})
 }
