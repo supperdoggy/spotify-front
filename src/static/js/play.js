@@ -17,7 +17,6 @@ function turnSong(path) {
 }
 
 window.onload = function (e) {
-   console.log("did");
     $.ajax({
         url: "http://localhost:8081/api/v1/getallsongs",
     })

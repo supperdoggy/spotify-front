@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"github.com/floyernick/fleep-go"
@@ -11,11 +12,12 @@ import (
 	"go.uber.org/zap"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
 type IService interface {
-	GetAllSongs() (*structs.GetAllSongsRespose, error)
+	GetAllSongs() (resp structs.GetAllSongsRespose, err error)
 	UploadNewSong(req *structs.UploadSongRequest) error
 }
 
@@ -27,40 +29,49 @@ func NewService(l *zap.Logger) IService {
 	return &Service{logger: l}
 }
 
-func (s *Service) GetAllSongs() (*structs.GetAllSongsRespose, error) {
-	resp, err := http.Get("http://localhost:8080/allsongs")
+func (s *Service) GetAllSongs() (resp structs.GetAllSongsRespose, err error) {
+	rawResp, err := http.Get("http://localhost:8080/allsongs")
 	if err != nil {
 		s.logger.Error("error making request to backend", zap.Error(err))
-		return nil, err
+		resp.Error = err.Error()
+		return resp, err
 	}
-	defer resp.Body.Close()
+	defer rawResp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
+	data, err := ioutil.ReadAll(rawResp.Body)
 	if err != nil {
 		s.logger.Error("error reading body", zap.Error(err))
-		return nil, err
+		resp.Error = err.Error()
+		return resp, err
 	}
 
-	var unmarshal []globalStructs.Song
+	var unmarshal structs.GetAllSongsRespose
 
 	if err := json.Unmarshal(data, &unmarshal); err != nil {
 		s.logger.Error("error unmarshalling body", zap.Error(err), zap.String("data", string(data)))
-		return nil, err
+		resp.Error = err.Error()
+		return resp, err
 	}
 
-	if len(unmarshal) == 0 {
-		return &structs.GetAllSongsRespose{Songs: unmarshal, Error: "not found"}, nil
+	if len(unmarshal.Songs) == 0 {
+		return unmarshal, nil
 	}
 
-	return &structs.GetAllSongsRespose{Songs: unmarshal}, nil
+	return unmarshal, nil
 }
 
 func (s *Service) UploadNewSong(req *structs.UploadSongRequest) error {
-	if req.SongData == "" || len(req.SongData) == 0 || req.ReleaseDate == "" || req.Album == "" || req.Band == "" || req.Name == "" {
+	if len(req.SongData) == 0 || req.ReleaseDate == "" || req.Album == "" || req.Band == "" || req.Name == "" {
 		return errors.New("you need to fill all the fields")
 	}
 
-	info, err := fleep.GetInfo([]byte(req.SongData))
+	b64data := req.SongData[strings.IndexByte(req.SongData, ',')+1:]
+	data, err := base64.StdEncoding.DecodeString(b64data)
+	if err != nil {
+		return err
+	}
+
+	info, err := fleep.GetInfo(data)
 	if err != nil {
 		return err
 	}
@@ -68,24 +79,23 @@ func (s *Service) UploadNewSong(req *structs.UploadSongRequest) error {
 	if !info.IsAudio() {
 		return errors.New("file must be audio")
 	}
-	// TODO properly parse time
-	//release, err := time.Parse("", req.ReleaseDate)
-	//if err != nil {
-	//	return err
-	//}
-	release := time.Now()
+
+	release, err := time.Parse("2006-01-02T15:04", req.ReleaseDate)
+	if err != nil {
+		return err
+	}
 
 	reqToBack := structsBack.CreateNewSongReq{
-		SongData: []byte(req.SongData),
-		Song:     globalStructs.Song{
-			Name: req.Name,
-			Band: req.Band,
-			Album: req.Album,
+		SongData: data,
+		Song: globalStructs.Song{
+			Name:        req.Name,
+			Band:        req.Band,
+			Album:       req.Album,
 			ReleaseDate: release,
 		},
 	}
 
-	data, err := json.Marshal(reqToBack)
+	data, err = json.Marshal(reqToBack)
 	if err != nil {
 		return errors.New("error marshalling req")
 	}
@@ -99,7 +109,6 @@ func (s *Service) UploadNewSong(req *structs.UploadSongRequest) error {
 	if err != nil {
 		return err
 	}
-	s.logger.Info("data", zap.Any("data", string(data)))
 
 	return nil
 }

@@ -14,8 +14,8 @@ type IHandlers interface {
 
 type Handlers struct {
 	logger *zap.Logger
-	r *gin.Engine
-	s service.IService
+	r      *gin.Engine
+	s      service.IService
 }
 
 func NewHandlers(l *zap.Logger, r *gin.Engine, s *service.IService) IHandlers {
