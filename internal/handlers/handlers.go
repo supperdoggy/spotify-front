@@ -25,12 +25,19 @@ func NewHandlers(l *zap.Logger, r *gin.Engine, s *service.IService) IHandlers {
 func (h *Handlers) InitHandlers() {
 	h.r.GET("/", h.index)
 	h.r.GET("/upload", h.downloadFile)
+	h.r.GET("/auth", h.authPage)
 
 	apiv1 := h.r.Group("/api/v1")
 	{
 		apiv1.GET("/getallsongs", h.getAllSongs)
 		apiv1.POST("/song", h.uploadSong)
+		apiv1.POST("/auth", h.auth)
 	}
+}
+
+func (h *Handlers) authPage(c *gin.Context) {
+	c.HTML(http.StatusOK, "login.html", gin.H{})
+	return
 }
 
 func (h *Handlers) index(c *gin.Context) {
@@ -70,4 +77,24 @@ func (h *Handlers) uploadSong(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"status": "ok"})
+}
+
+func (h *Handlers) auth(c *gin.Context) {
+	var req structs.AuthReq
+	var resp structs.AuthResp
+	if err := c.Bind(&req); err != nil {
+		h.logger.Error("error binding request", zap.Error(err))
+		resp.Error = "error binding request"
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	resp, err := h.s.Auth(req)
+	if err != nil {
+		h.logger.Error("error when Auth()", zap.Error(err))
+		c.JSON(http.StatusBadRequest, resp)
+		return
+	}
+
+	c.JSON(http.StatusOK, resp)
 }

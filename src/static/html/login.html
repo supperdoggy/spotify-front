@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Authorization</title>
+    <link rel="stylesheet" href="./src/static/css/login.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<script src="./src/static/js/login.js"></script>
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <h2 class="active" id="sign_in" onclick="activateLog()"> Sign In </h2>
+        <h2 class="inactive underlineHover" id="sign_up" onclick="activateReg()">Sign Up </h2>
+
+        <input type="email" id="email" class="fadeIn second" name="email" placeholder="login">
+        <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
+        <input type="button" id="send" class="fadeIn fourth" value="Log In" onclick="send()">
+
+        <div id="formFooter">
+            <a class="underlineHover" href="#">Forgot Password?</a>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

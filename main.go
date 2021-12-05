@@ -13,7 +13,8 @@ func main() {
 	// todo to config
 	port := ":8081"
 
-	r.LoadHTMLFiles("./src/static/html/play.html", "./src/static/html/download.html")
+	r.LoadHTMLFiles("./src/static/html/play.html", "./src/static/html/download.html",
+		"./src/static/html/login.html")
 	r.Static("src/static", "./src/static")
 
 	service := service2.NewService(logger)

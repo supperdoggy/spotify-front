@@ -19,6 +19,7 @@ import (
 type IService interface {
 	GetAllSongs() (resp structs.GetAllSongsRespose, err error)
 	UploadNewSong(req *structs.UploadSongRequest) error
+	Auth(req structs.AuthReq) (resp structs.AuthResp, err error)
 }
 
 type Service struct {
@@ -111,4 +112,54 @@ func (s *Service) UploadNewSong(req *structs.UploadSongRequest) error {
 	}
 
 	return nil
+}
+
+func (s *Service) Auth(req structs.AuthReq) (resp structs.AuthResp, err error) {
+	if req.Email == "" || req.Password == "" {
+		resp.Error = "you need to fill all the fields"
+		return resp, errors.New(resp.Error)
+	}
+
+	if req.Login == false && (req.FirstName == "" || req.LastName == "") {
+		resp.Error = "you need to fill all the fields"
+		return resp, errors.New(resp.Error)
+	}
+	var url = "http://localhost:8080/login"
+	if !req.Login {
+		url = "http://localhost:8080/register"
+	}
+	marshalled, err := json.Marshal(req)
+	if err != nil {
+		s.logger.Error("error marshalling req", zap.Error(err))
+		resp.Error = err.Error()
+		return
+	}
+
+	respData, err := http.Post(url, "application/json", bytes.NewBuffer(marshalled))
+	if err != nil {
+		s.logger.Error("error making request to backend", zap.Error(err))
+		resp.Error = err.Error()
+		return
+	}
+	defer respData.Body.Close()
+
+	data, err := ioutil.ReadAll(respData.Body)
+	if err != nil {
+		s.logger.Error("error reading body", zap.Error(err))
+		resp.Error = err.Error()
+		return
+	}
+
+	if err := json.Unmarshal(data, &resp); err != nil {
+		s.logger.Error("error unmarshalling data", zap.Error(err))
+		resp.Error = err.Error()
+		return resp, err
+	}
+
+	if resp.Error != "" {
+		s.logger.Error("got error from backend", zap.Any("error", resp.Error))
+		return resp, errors.New(resp.Error)
+	}
+
+	return
 }
