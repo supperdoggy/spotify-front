@@ -41,11 +41,19 @@ func (h *Handlers) authPage(c *gin.Context) {
 }
 
 func (h *Handlers) index(c *gin.Context) {
+	if !h.s.CheckToken(c) {
+		return
+	}
+
 	c.HTML(http.StatusOK, "play.html", gin.H{})
 	return
 }
 
 func (h *Handlers) getAllSongs(c *gin.Context) {
+	if !h.s.CheckToken(c) {
+		return
+	}
+
 	respose, err := h.s.GetAllSongs()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -58,10 +66,17 @@ func (h *Handlers) getAllSongs(c *gin.Context) {
 }
 
 func (h *Handlers) downloadFile(c *gin.Context) {
+	if !h.s.CheckToken(c) {
+		return
+	}
 	c.HTML(http.StatusOK, "download.html", gin.H{})
 }
 
 func (h *Handlers) uploadSong(c *gin.Context) {
+	if !h.s.CheckToken(c) {
+		return
+	}
+
 	var data structs.UploadSongRequest
 	if err := c.Bind(&data); err != nil {
 		h.logger.Error("error binding req", zap.Error(err))

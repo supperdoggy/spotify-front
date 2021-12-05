@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/floyernick/fleep-go"
+	"github.com/gin-gonic/gin"
+	structs2 "github.com/supperdoggy/spotify-web-project/spotify-auth/shared/structs"
 	structsBack "github.com/supperdoggy/spotify-web-project/spotify-back/shared/structs"
 	"github.com/supperdoggy/spotify-web-project/spotify-front/internal/structs"
 	globalStructs "github.com/supperdoggy/spotify-web-project/spotify-globalStructs"
@@ -20,6 +22,7 @@ type IService interface {
 	GetAllSongs() (resp structs.GetAllSongsRespose, err error)
 	UploadNewSong(req *structs.UploadSongRequest) error
 	Auth(req structs.AuthReq) (resp structs.AuthResp, err error)
+	CheckToken(c *gin.Context) bool
 }
 
 type Service struct {
@@ -161,5 +164,60 @@ func (s *Service) Auth(req structs.AuthReq) (resp structs.AuthResp, err error) {
 		return resp, errors.New(resp.Error)
 	}
 
+	return
+}
+
+func (s *Service) CheckToken(c *gin.Context) bool {
+	token, err := c.Cookie("t")
+	if err != nil {
+		c.Redirect(http.StatusPermanentRedirect, "http://localhost:8081/auth")
+		return false
+	}
+
+	data, err := s.GetToken(token)
+	if err != nil {
+		s.logger.Error("error when getting token", zap.Error(err))
+		c.Redirect(http.StatusPermanentRedirect, "http://localhost:8081/auth")
+		return false
+	}
+
+	if !data.OK {
+		c.Redirect(http.StatusPermanentRedirect, "http://localhost:8081/auth")
+		return false
+	}
+	return true
+}
+
+func (s *Service) GetToken(token string) (resp structs2.CheckTokenResp, err error){
+	req := structs2.CheckTokenReq{Token: token}
+	data, err := json.Marshal(req)
+	if err != nil {
+		s.logger.Error("error marshalling token", zap.Error(err))
+		return resp, err
+	}
+
+	respRow, err := http.Post("http://localhost:8083/api/v1/check_token", "application/json", bytes.NewBuffer(data))
+	if err != nil {
+		s.logger.Error("error making request to auth")
+		return
+	}
+	defer respRow.Body.Close()
+
+	data, err = ioutil.ReadAll(respRow.Body)
+	if err != nil {
+		s.logger.Error("error reading body", zap.Error(err))
+		return
+	}
+
+	err = json.Unmarshal(data, &resp)
+	if err != nil {
+		s.logger.Error("error unmarshalling data", zap.Error(err))
+		return
+	}
+
+	if resp.Error == "" {
+		s.logger.Error("got error from auth", zap.Any("error", resp.Error))
+		return
+	}
 	return
 }
