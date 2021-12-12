@@ -215,7 +215,7 @@ func (s *Service) GetToken(token string) (resp structs2.CheckTokenResp, err erro
 		return
 	}
 
-	if resp.Error == "" {
+	if resp.Error != "" {
 		s.logger.Error("got error from auth", zap.Any("error", resp.Error))
 		return
 	}

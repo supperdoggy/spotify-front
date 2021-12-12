@@ -22,8 +22,7 @@ window.onload = function (e) {
     })
         .done(function( data ) {
             for (let i = 0; i < data.songs.length; i++) {
-                console.log(data.songs[i]);
-                let el = `<button onclick="turnSong('${data.songs[i].path}')">${data.songs[i].name}</button>`;
+                let el = `<p class='songStyle' onclick="turnSong('${data.songs[i].path}')">${data.songs[i].band}: ${data.songs[i].name}</p>`;
                 $("#buttons").append(el);
             }
         });

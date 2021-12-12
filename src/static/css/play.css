@@ -1,0 +1,38 @@
+.songStyle {
+    background-color: white; /* Changing background color */
+    font-weight: bold; /* Making font bold */
+    border-radius: 20px; /* Making border radius */
+    width: 95%; /* Making auto-sizable width */
+    height: auto; /* Making auto-sizable height */
+    padding: 5px 30px 5px 30px; /* Making space around letters */
+    font-size: 18px; /* Changing font size */
+    align-content: start;
+    margin: 3px;
+}
+
+html {
+    background-color: #56baed;
+}
+
+.buttonsClass {
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+}
+
+.playerClass {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+.uploadSong {
+    background-color: white;
+    color: black;
+    padding: 0.5rem;
+    font-family: sans-serif;
+    border-radius: 0.3rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}

@@ -1,18 +1,23 @@
 <html lang="html">
 <head>
     <link rel="stylesheet" href="https://cdn.plyr.io/1.8.2/plyr.css" />
+    <link rel="stylesheet" href="./src/static/css/play.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>spotify clone</title>
 </head>
-<body style="background: black">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <script src="https://cdn.plyr.io/1.8.2/plyr.js"></script>
 <script src="./src/static/js/play.js"></script>
 
-
-<div id="buttons">
+<div>
+    <a href="/upload">
+        <button class="uploadSong" href="/upload">Upload your song!</button>
+    </a>
 </div>
-
-        <audio id="player"></audio>
+<br>
+<br>
+<div id="buttons" class="buttonsClass">
+</div>
+        <audio class="playerClass" id="player"></audio>
 </body>
 </html>

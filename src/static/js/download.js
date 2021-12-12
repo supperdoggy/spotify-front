@@ -28,7 +28,11 @@ function send() {
             dataType: 'json',
             contentType: "application/json; charset=utf-8",
         }).done(function( data ) {
-            console.log(data);
+            if (data.status === "ok") {
+                alert("done!");
+            } else {
+                alert("fill all the fields");
+            }
         });
     });
 
