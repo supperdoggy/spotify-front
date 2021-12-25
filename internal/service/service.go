@@ -188,7 +188,7 @@ func (s *Service) CheckToken(c *gin.Context) bool {
 	return true
 }
 
-func (s *Service) GetToken(token string) (resp structs2.CheckTokenResp, err error){
+func (s *Service) GetToken(token string) (resp structs2.CheckTokenResp, err error) {
 	req := structs2.CheckTokenReq{Token: token}
 	data, err := json.Marshal(req)
 	if err != nil {

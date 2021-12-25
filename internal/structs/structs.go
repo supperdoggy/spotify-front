@@ -16,11 +16,11 @@ type UploadSongRequest struct {
 }
 
 type AuthReq struct {
-	Email string `json:"email"`
-	Password string `json:"password"`
+	Email     string `json:"email"`
+	Password  string `json:"password"`
 	FirstName string `json:"first_name"`
-	LastName string `json:"last_name"`
-	Login bool `json:"login"`
+	LastName  string `json:"last_name"`
+	Login     bool   `json:"login"`
 }
 
 type AuthResp struct {
